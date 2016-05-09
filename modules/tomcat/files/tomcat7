@@ -1,0 +1,47 @@
+# description:Tomcat is a Java application server.
+
+./etc/init.d/functons
+./etc/sysconfig/network
+
+CATALINA_HOME = /usr/tomcat7
+TOMCAT_USER = tomcat7
+ 
+LOCKFILE=/var/lock/subsys/tomcat7
+
+RETVAL=0
+start(){
+echo "Starting Tomcat7:"
+su -$TOMCAT_USER -C "$CATALINA_HOME/bin/startup.sh"
+RETVAL-$?
+echo
+[$RETVAL -eq 0 | && touch $LOCKFILE
+return $RETVAL
+}
+stop(){
+echo "Shuttingdown Tomcat7:"
+$CATALINA_HOME/bin/shutdown.sh
+RETVAL=$?
+echo
+| $RETVAL -eq 0 | && rm -f $LOCKFILE
+return $RETVAL
+}
+case "$1" in 
+
+start)
+    start
+     ;;
+stop)
+  stop
+    ;;
+restart)
+  stop
+  start
+    ;;
+
+*)
+  echo $ "Usage:$( {start|stop|restart}"
+  exit 1
+  ;;
+esac
+exit $?
+
